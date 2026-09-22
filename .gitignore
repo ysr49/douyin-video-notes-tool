@@ -1,4 +1,6 @@
 downloads/
+work/
+media/
 *.mp4
 *.mp3
 *.wav
@@ -8,6 +10,9 @@ downloads/
 *_transcript.md
 *_整理版.md
 *_savetik.json
+transcription-state.json
+download-state.json
+gpu-author-pipeline.lock
 
 node_modules/
 

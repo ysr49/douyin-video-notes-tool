@@ -1,0 +1,4 @@
+interface:
+  display_name: "IDM Download"
+  short_description: "用 IDM 下载并严格校验媒体直链文件"
+  default_prompt: "Use $idm-download to download and verify this resolved media URL."

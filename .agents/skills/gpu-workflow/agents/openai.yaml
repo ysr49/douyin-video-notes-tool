@@ -1,0 +1,4 @@
+interface:
+  display_name: "GPU工作流"
+  short_description: "抖音与本地视频的 IDM 下载和 GPU 转写工作流"
+  default_prompt: "Use $gpu-workflow to download this video and produce GPU-verified transcripts."

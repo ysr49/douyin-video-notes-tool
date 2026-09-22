@@ -1,0 +1,5 @@
+interface:
+  display_name: "GPU Transcribe"
+  short_description: "Use the existing desktop GPU engine for every media transcript."
+  default_prompt: "Use $gpu-transcribe to transcribe this media through my existing GPU tool, with no CPU fallback."
+

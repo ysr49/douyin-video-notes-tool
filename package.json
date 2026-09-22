@@ -1,8 +1,8 @@
 {
+  "name": "douyin-video-notes-tool",
+  "private": true,
+  "description": "Windows GPU workflow: resolve Douyin/video links, download with IDM, transcribe with a local Whisper GPU engine.",
   "dependencies": {
-    "html-to-docx": "^1.8.0",
-    "juice": "^11.1.1",
-    "playwright-core": "^1.59.1",
-    "sharp": "^0.34.5"
+    "playwright-core": "^1.59.1"
   }
 }

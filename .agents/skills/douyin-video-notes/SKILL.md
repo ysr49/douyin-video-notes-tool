@@ -1,61 +1,52 @@
 ---
 name: douyin-video-notes
-description: Download Douyin videos, extract or transcribe audio, and produce structured Chinese notes. Use when: the user gives a Douyin/TikTok short video link and asks to download, transcribe, summarize, 整理, 提取文字稿, or make notes.
+description: Download Douyin videos, extract or transcribe audio, and produce GPU-verified Chinese transcripts. Use when the user gives a Douyin/TikTok or other video link and asks to download, transcribe, summarize, 整理, 提取文字稿, or make notes.
 ---
 
 # Douyin Video Notes
 
-Use this workflow when the user gives a Douyin video link and wants the video, transcript, and a structured note.
+This skill is the user-facing entry for the GPU workflow. It does not transcribe in Python. It routes to `video-link-workflow` → `idm-download` → `gpu-transcribe`.
 
-## Default Command
+## Default command
 
-From `D:/CC_test`:
+From this repository root:
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File tools/douyin-video-notes.ps1 "https://v.douyin.com/xxxx/"
 ```
 
-The command writes files under `D:/CC_test/downloads`.
-
-## Outputs
-
-For a detected video id `<id>`, expect:
-
-- `downloads/douyin_<id>_hd.mp4`
-- `downloads/douyin_<id>_audio.mp3`
-- `downloads/douyin_<id>_savetik.json`
-- `downloads/douyin_<id>_transcript.txt`
-- `downloads/douyin_<id>_transcript.md`
-- `downloads/douyin_<id>_整理版.md`
-
-## Workflow
-
-1. Run `tools/douyin-video-notes.ps1` with the user-provided URL.
-2. The script uses SaveTik through `tools/savetik_fetch.js` to retrieve download links and page text.
-3. The script downloads MP4 HD and MP3 when available.
-4. By default, it uses SaveTik text if present. If no text is present, it calls the existing `video-transcript-capture` Faster Whisper transcriber.
-5. If the user specifically wants audio transcription, pass `--transcript-mode whisper`.
-6. After the command completes, read `downloads/douyin_<id>_整理版.md`.
-7. If the generated note is too mechanical, improve it manually in the same default style:
-   - 一句话总结
-   - 核心框架
-   - 分步骤拆解
-   - 可执行清单
-   - 金句
-
-## Install
-
-Run once from `D:/CC_test`:
+Equivalent orchestrator:
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File tools/install-douyin-video-notes.ps1
+powershell -ExecutionPolicy Bypass -File .agents/skills/video-link-workflow/scripts/video-link-workflow.ps1 "https://v.douyin.com/xxxx/" -Action both
 ```
 
-This installs Node dependencies, Python transcription dependencies, and copies this skill to `D:/CodexHome/skills/douyin-video-notes`.
+Outputs land in `downloads/` unless `-OutputDir` is passed.
 
-## Failure Handling
+## What a single Douyin link does
 
-- If Chrome is not installed in the default path, set `CHROME_PATH`.
-- If SaveTik fails, report the error and do not pretend the video was processed.
-- If Whisper is requested and dependencies are missing, run the installer again.
-- If the generated note has mojibake, reread/write files explicitly as UTF-8.
+1. Open the share page in local Chrome through Playwright.
+2. Read the page's own `aweme/detail` response and take a media URL.
+3. Download that URL with Internet Download Manager.
+4. Verify the file with `ffprobe`.
+5. Transcribe on the local NVIDIA/AMD/Intel GPU Whisper desktop engine.
+6. Convert the TXT/SRT/VTT to Simplified Chinese.
+7. Delete the mp4 after verified transcripts exist, unless `-KeepVideo` is passed.
+
+## Required local software
+
+This repo ships scripts only. The other person still needs:
+
+- Windows + Node.js + Chrome
+- Internet Download Manager (`IDMan.exe`)
+- ffmpeg / ffprobe on PATH
+- The Whisper GPU desktop folder (`main.exe`, `Whisper.dll`, `ggml-medium.bin`, plus the bundled 繁体简体转换工具)
+
+Set `WHISPER_GPU_DIR` if the engine is not on the Desktop and not under `03_*/external/whisper-gpu`.
+
+## Related skills
+
+- `video-link-workflow` — URL gateway (Douyin, Bilibili, YouTube, direct media)
+- `idm-download` — IDM download + ffprobe verify
+- `gpu-transcribe` — GPU-only transcription
+- `gpu-workflow` — creator-homepage batch pipeline

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Video Link Download and GPU Transcript"
+  short_description: "Resolve, download, verify, and transcribe video links with GPU"
+  default_prompt: "Use $video-link-workflow to download this video link and create a GPU-verified transcript."
